@@ -202,10 +202,14 @@ IL_6F:
             while (fileStrBytes.Count != len)
             {
                 byte b = br.ReadByte();
-                if (b == t || b == 0) break;
+                if (b == t || b == 0)
+				{
+					br.BaseStream.Position--;
+                    break;
+                }
                 fileStrBytes.Add(b);
             }
-            if(len >= 0) br.BaseStream.Position += len - fileStrBytes.Count - 1;
+            if(len >= 0) br.BaseStream.Position += len - fileStrBytes.Count;
             return Encoding.GetEncoding("shift-jis").GetString(fileStrBytes.ToArray());
 		}
 

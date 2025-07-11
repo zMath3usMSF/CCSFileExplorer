@@ -200,7 +200,7 @@ namespace CCSFileExplorerWV
             d.FileName = name;
             if (d.ShowDialog() == DialogResult.OK)
             {
-				byte[] textData = new byte[1];
+				byte[] textData = new byte[0];
                 foreach (Block block in ccsfile.blocks)
                 {
                     if (block.BlockID == 0xCCCC2400)
@@ -211,7 +211,7 @@ namespace CCSFileExplorerWV
                     }
                 }
                 ccsfile.Save(d.FileName);
-				if(textData.Length != 0)
+				if (textData.Length != 0 && ccsfile.header.Name.Contains("ppt"))
 				{
                     CCSFile txtPuppet = ccsfile.Clone();
                     txtPuppet.header.Name = txtPuppet.header.Name + "txt";
@@ -1304,7 +1304,7 @@ namespace CCSFileExplorerWV
 						lastOBJID = j;
 					}
 				}
-				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastOBJID + i + 1)), 0, 4);
+				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastOBJID + i)), 0, 4);
 			}
 			return memoryStream.ToArray().ToList();
 		}
@@ -1327,7 +1327,7 @@ namespace CCSFileExplorerWV
 			if (fixBonne != 0)
 			{
 				memoryStream.Seek(-0x4, SeekOrigin.Current);
-				uint newID = ccsfile.toc.ObjCount + 1;
+				uint newID = ccsfile.toc.ObjCount;
 				int sub = oldIndex - previousID - 1;
 				int dif = oldIndex - fixBonne;
 				uint newMDLOBJ = newID - (uint)dif;
@@ -1343,7 +1343,7 @@ namespace CCSFileExplorerWV
 					lastMDLID = i;
 				}
 			}
-			memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastMDLID) + 1), 0, 4);
+			memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastMDLID)), 0, 4);
 			return memoryStream.ToArray().ToList();
 		}
 		private List<byte> FixRigMDL(List<byte> block, int index, int count, List<string> objNames)
@@ -1371,8 +1371,8 @@ namespace CCSFileExplorerWV
 						lastMDLID = i;
 					}
 				}
+				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastMDLID)), 0, 4);
 				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastMDLID) + 1), 0, 4);
-				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastMDLID) + 2), 0, 4);
 				for(int k = 0; k < subModelCount;k++)
 				{
                     ccsfile.toc.ObjCount++;
@@ -1393,7 +1393,7 @@ namespace CCSFileExplorerWV
 				{
 					memoryStream.Seek(1, SeekOrigin.Current);
 				}
-				byte[] newMaterial = BitConverter.GetBytes(Convert.ToUInt32(ccsfile.toc.ObjCount + 1));
+				byte[] newMaterial = BitConverter.GetBytes(Convert.ToUInt32(ccsfile.toc.ObjCount));
 				for (int i = 0; i < meshesCount; i++)
 				{
 					memoryStream.Write(newMaterial, 0, newMaterial.Length);
@@ -1458,11 +1458,11 @@ namespace CCSFileExplorerWV
 						texID = i;
 					}
 				}
-				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(texID) + 1), 0, 4);
+				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(texID)), 0, 4);
 			}
 			else
 			{
-				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastTEXID) + 1), 0, 4);
+				memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastTEXID)), 0, 4);
 			}
 			return memoryStream.ToArray().ToList();
 		}
