@@ -1649,7 +1649,7 @@ namespace CCSFileExplorerWV
 				}
 			}
 			memoryStream.Write(BitConverter.GetBytes(Convert.ToUInt32(lastCLTID)), 0, 4);
-			return memoryStream.ToArray().ToList();//
+			return memoryStream.ToArray().ToList();
 		}
 
 		private string ReadString(FileStream fileStream)
